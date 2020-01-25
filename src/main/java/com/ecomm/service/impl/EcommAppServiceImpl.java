@@ -131,6 +131,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 	}
 	
 	private EcommAppUser saveEcommAppUser(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method saveEcommAppUser");
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		EcommAppUser ecommAppNewUser = new EcommAppUser();
 		ecommAppNewUser.setUserEmail(ecommAppRequest.getEmail());
