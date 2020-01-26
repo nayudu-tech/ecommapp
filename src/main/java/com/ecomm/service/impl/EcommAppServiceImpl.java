@@ -78,7 +78,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 			final UserDetails userDetails = loadUserByUsername(authenticationRequest.getEmail());
 			final String token = jwtTokenUtil.generateToken(userDetails);
 			if(token != null) {
-				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm a"); 
+				SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm a z"); 
 				logger.debug("User Successfully loggedin");
 				EcommAppUser userData = ecommAppUserRepository.findByUserEmail(authenticationRequest.getEmail());
 				ecommResponse.setToken(token);
