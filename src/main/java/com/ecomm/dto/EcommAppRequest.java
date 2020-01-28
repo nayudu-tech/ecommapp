@@ -1,5 +1,7 @@
 package com.ecomm.dto;
 
+import com.ecomm.model.Product;
+
 public class EcommAppRequest {
 
 	private String email;
@@ -7,6 +9,7 @@ public class EcommAppRequest {
 	private String firstName;
 	private String lastName;
 	private String mobileNo;
+	private Product product;
 	
 	public String getPassword() {
 		return password;
@@ -37,5 +40,11 @@ public class EcommAppRequest {
 	}
 	public void setMobileNo(String mobileNo) {
 		this.mobileNo = mobileNo;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 }

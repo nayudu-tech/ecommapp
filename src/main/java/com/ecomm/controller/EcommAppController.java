@@ -1,15 +1,18 @@
 package com.ecomm.controller;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecomm.dto.EcommAppRequest;
 import com.ecomm.dto.EcommAppResponse;
+import com.ecomm.model.Product;
 import com.ecomm.service.EcommAppService;
 
 @RestController
@@ -29,4 +32,15 @@ public class EcommAppController {
 	public EcommAppResponse createAuthenticationToken(@Valid @RequestBody EcommAppRequest authenticationRequest) {
 		return ecommAppService.createAuthenticationTokenImpl(authenticationRequest);
 	}
+	//get all products available
+	@GetMapping(value = "/products")
+    public @NotNull EcommAppResponse getProducts() {
+        return ecommAppService.getAllProducts();
+    }
+	
+	//save product
+	@PostMapping(value = "/saveProduct")
+    public @NotNull EcommAppResponse saveProducts(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.saveProduct(ecommAppRequest);
+    }
 }

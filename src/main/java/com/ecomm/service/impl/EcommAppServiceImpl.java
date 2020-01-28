@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -18,10 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ecomm.dao.EcommAppUserRepository;
+import com.ecomm.dao.ProductsRepository;
 import com.ecomm.dto.EcommAppRequest;
 import com.ecomm.dto.EcommAppResponse;
 import com.ecomm.jwt.config.JwtTokenUtil;
 import com.ecomm.model.EcommAppUser;
+import com.ecomm.model.Product;
 import com.ecomm.service.EcommAppService;
 import com.ecomm.util.Utility;
 
@@ -36,6 +39,8 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 	private JwtTokenUtil jwtTokenUtil;
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
+	@Autowired
+	private ProductsRepository productsRepository;
 	private static final Logger logger = LoggerFactory.getLogger(EcommAppServiceImpl.class);
 
 	@Override
@@ -149,4 +154,44 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 		
 		return ecommAppSavedUser;
 	}
+
+	@Override
+	public EcommAppResponse getAllProducts() {
+		logger.debug("inside method saveProduct");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			Iterable<Product> products = productsRepository.findAll();
+			if(products != null) {
+				ecommResponse.setProducts(products);
+				return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+			}else {
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("no.data.found"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+	
+	@Override
+    public Product getProduct(int id) {
+        return productsRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    }
+	
+	@Override
+    public EcommAppResponse saveProduct(EcommAppRequest ecommAppRequest) {
+		logger.debug("inside method saveProduct");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			Product savedProduct = productsRepository.save(ecommAppRequest.getProduct());
+			if(savedProduct != null) {
+				return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.save.success.msg"));
+			}else {
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.save.failed.msg"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+    }
 }

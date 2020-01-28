@@ -1,5 +1,6 @@
 package com.ecomm.dto;
 
+import com.ecomm.model.Product;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @SuppressWarnings("all")
@@ -15,6 +16,7 @@ public class EcommAppResponse {
 	private String status;
 	private Integer statusCode;
 	private String message;
+	private Iterable<Product> products;
 	
 	public String getToken() {
 		return token;
@@ -69,5 +71,11 @@ public class EcommAppResponse {
 	}
 	public void setMobileNo(String mobileNo) {
 		this.mobileNo = mobileNo;
+	}
+	public Iterable<Product> getProducts() {
+		return products;
+	}
+	public void setProducts(Iterable<Product> products) {
+		this.products = products;
 	}
 }
