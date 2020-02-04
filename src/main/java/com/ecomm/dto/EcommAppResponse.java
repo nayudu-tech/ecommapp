@@ -1,5 +1,7 @@
 package com.ecomm.dto;
 
+import com.ecomm.model.Category;
+import com.ecomm.model.Order;
 import com.ecomm.model.Product;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -17,6 +19,9 @@ public class EcommAppResponse {
 	private Integer statusCode;
 	private String message;
 	private Iterable<Product> products;
+	private Iterable<Category> categories;
+	private Iterable<Order> orders;
+	private Order order;
 	
 	public String getToken() {
 		return token;
@@ -77,5 +82,23 @@ public class EcommAppResponse {
 	}
 	public void setProducts(Iterable<Product> products) {
 		this.products = products;
+	}
+	public Iterable<Category> getCategories() {
+		return categories;
+	}
+	public void setCategories(Iterable<Category> categories) {
+		this.categories = categories;
+	}
+	public Iterable<Order> getOrders() {
+		return orders;
+	}
+	public void setOrders(Iterable<Order> orders) {
+		this.orders = orders;
+	}
+	public Order getOrder() {
+		return order;
+	}
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 }

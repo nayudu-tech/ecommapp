@@ -11,4 +11,6 @@ public interface EcommAppService {
 	EcommAppResponse getAllProducts();
 	Product getProduct(int id);
 	EcommAppResponse saveProduct(EcommAppRequest ecommAppRequest);
+	EcommAppResponse saveCategory(EcommAppRequest ecommAppRequest);
+	EcommAppResponse getCategories();
 }

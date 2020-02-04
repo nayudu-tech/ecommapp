@@ -18,11 +18,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ecomm.dao.CategoryRepository;
 import com.ecomm.dao.EcommAppUserRepository;
 import com.ecomm.dao.ProductsRepository;
 import com.ecomm.dto.EcommAppRequest;
 import com.ecomm.dto.EcommAppResponse;
 import com.ecomm.jwt.config.JwtTokenUtil;
+import com.ecomm.model.Category;
 import com.ecomm.model.EcommAppUser;
 import com.ecomm.model.Product;
 import com.ecomm.service.EcommAppService;
@@ -41,6 +43,8 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 	private PasswordEncoder bcryptEncoder;
 	@Autowired
 	private ProductsRepository productsRepository;
+	@Autowired
+	private CategoryRepository categoryRepository;
 	private static final Logger logger = LoggerFactory.getLogger(EcommAppServiceImpl.class);
 
 	@Override
@@ -157,7 +161,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 
 	@Override
 	public EcommAppResponse getAllProducts() {
-		logger.debug("inside method saveProduct");
+		logger.debug("inside method getAllProducts");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		try {
 			Iterable<Product> products = productsRepository.findAll();
@@ -194,4 +198,39 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
 		}
     }
+	
+	@Override
+    public EcommAppResponse saveCategory(EcommAppRequest ecommAppRequest) {
+		logger.debug("inside method saveCategory");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			Category category = categoryRepository.save(ecommAppRequest.getCategory());
+			if(category != null) {
+				return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.save.success.msg"));
+			}else {
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.save.failed.msg"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+
+	@Override
+	public EcommAppResponse getCategories() {
+		logger.debug("inside method getCategories");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			Iterable<Category> categories = categoryRepository.findAll();
+			if(categories != null) {
+				ecommResponse.setCategories(categories);
+				return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+			}else {
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("no.data.found"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
 }
