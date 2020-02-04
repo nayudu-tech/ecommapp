@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecomm.dto.EcommAppRequest;
 import com.ecomm.dto.EcommAppResponse;
-import com.ecomm.model.Order;
 import com.ecomm.service.EcommAppOrderService;
 import com.ecomm.service.EcommAppService;
 

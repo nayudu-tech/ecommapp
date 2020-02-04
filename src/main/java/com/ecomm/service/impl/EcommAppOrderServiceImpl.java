@@ -27,6 +27,7 @@ import com.ecomm.service.EcommAppOrderService;
 import com.ecomm.util.Utility;
 
 @Service
+@SuppressWarnings("all")
 public class EcommAppOrderServiceImpl implements EcommAppOrderService{
 
 	@Autowired
@@ -59,18 +60,11 @@ public class EcommAppOrderServiceImpl implements EcommAppOrderService{
     public EcommAppResponse createOrderImpl(EcommAppRequest ecommAppRequest) {
 		logger.debug("inside method create");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
-		Date date = new Date();
+		
 		try {
 			validateProductsExistence(ecommAppRequest.getOrderProductDtos());
 			Order order = new Order();
-			order.setOrderDate(new Timestamp(date.getTime()));
-	        order.setStatus("PAID");
-	        order.setOrderNo("OID-"+Utility.getInstance().generateRandom(12));
-	        order.setCustomerName(ecommAppRequest.getCustomerName());
-	        order.setCustomerAddress(ecommAppRequest.getCustomerAddress());
-	        order.setCustomerPhone(ecommAppRequest.getCustomerPhone());
-	        order.setCustomerEmail(ecommAppRequest.getCustomerEmail());
-	        order = this.orderRepository.save(order);
+			order = savingOrderObject(ecommAppRequest, order);
 	        List<OrderProduct> orderProducts = new ArrayList<>();
 	        for (OrderProductDto dto : ecommAppRequest.getOrderProductDtos()) {
 	        	Product product = productsRepository.getProductById(dto.getProduct().getProductId());
@@ -99,6 +93,21 @@ public class EcommAppOrderServiceImpl implements EcommAppOrderService{
             new ResourceNotFoundException("Product not found");
         }
     }
+	
+	private Order savingOrderObject(EcommAppRequest ecommAppRequest, Order order) {
+		
+		Date date = new Date();
+		order.setOrderDate(new Timestamp(date.getTime()));
+        order.setStatus("PAID");
+        order.setOrderNo("OID-"+Utility.getInstance().generateRandom(12));
+        order.setCustomerName(ecommAppRequest.getCustomerName());
+        order.setCustomerAddress(ecommAppRequest.getCustomerAddress());
+        order.setCustomerPhone(ecommAppRequest.getCustomerPhone());
+        order.setCustomerEmail(ecommAppRequest.getCustomerEmail());
+        order = this.orderRepository.save(order);
+        
+        return order;
+	}
 	
 	@Override
     public void update(Order order) {
