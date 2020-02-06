@@ -58,7 +58,7 @@ public class EcommAppOrderServiceImpl implements EcommAppOrderService{
 	
 	@Override
     public EcommAppResponse createOrderImpl(EcommAppRequest ecommAppRequest) {
-		logger.debug("inside method create");
+		logger.debug("inside method createOrderImpl");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		
 		try {

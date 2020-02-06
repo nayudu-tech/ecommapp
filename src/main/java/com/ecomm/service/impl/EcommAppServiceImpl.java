@@ -1,5 +1,10 @@
 package com.ecomm.service.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecomm.dao.CategoryRepository;
 import com.ecomm.dao.EcommAppUserRepository;
@@ -233,4 +240,50 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
 		}
 	}
+
+	@Override
+	public EcommAppResponse uploadFileImpl(MultipartFile file, String productId) {
+		EcommAppResponse ecommResponse = storeFile(file);
+		try {
+			if(ecommResponse.getStatusCode() == 200) {
+				Product product = getProduct(Integer.parseInt(productId));
+				if(product != null) {
+					String fileDownloadUri = "http://ec2-18-222-3-132.us-east-2.compute.amazonaws.com:8080/products-imgs/"+ecommResponse.getFileName();
+					product.setPictureUrl(fileDownloadUri);
+					productsRepository.save(product);
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+				}
+			}
+			
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+		return ecommResponse;
+	}
+	
+	private EcommAppResponse storeFile(MultipartFile file) {
+		
+		EcommAppResponse ecommAppResponse = new EcommAppResponse();
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        Path fileStorageLocation = null;
+
+        try {
+        	
+        	fileStorageLocation = Paths.get(Utility.getInstance().readProperty("file.upload-dir")).toAbsolutePath().normalize();
+        	
+            // Check if the file's name contains invalid characters
+            if(fileName.contains("..")) {
+            	return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommAppResponse, "Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            // Copy file to the target location (Replacing existing file with the same name)
+            Path targetLocation = fileStorageLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            ecommAppResponse.setFileName(fileName);
+            return Utility.getInstance().successResponse(new EcommAppRequest(), ecommAppResponse, Utility.getInstance().readProperty("transaction.successful"));
+        } catch (IOException ex) {
+        	return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommAppResponse, "Could not store file " + fileName + ". Please try again!");
+        }
+    }
 }

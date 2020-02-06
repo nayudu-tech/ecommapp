@@ -22,6 +22,7 @@ public class EcommAppResponse {
 	private Iterable<Category> categories;
 	private Iterable<Order> orders;
 	private Order order;
+	private String fileName;
 	
 	public String getToken() {
 		return token;
@@ -100,5 +101,11 @@ public class EcommAppResponse {
 	}
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

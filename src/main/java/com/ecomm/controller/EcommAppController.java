@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecomm.dto.EcommAppRequest;
 import com.ecomm.dto.EcommAppResponse;
@@ -61,9 +63,14 @@ public class EcommAppController {
     public @NotNull EcommAppResponse createOrder(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
         return ecommAppOrderService.createOrderImpl(ecommAppRequest);
     }
+	//get all orders available
 	@GetMapping(value = "/orders")
     @ResponseStatus(HttpStatus.OK)
     public @NotNull EcommAppResponse list() {
         return this.ecommAppOrderService.getAllOrders();
     }
+	@PostMapping("/uploadFile")
+    public @NotNull EcommAppResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("productId") String productId) {
+		return ecommAppService.uploadFileImpl(file, productId);
+	}
 }

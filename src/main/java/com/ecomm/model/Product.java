@@ -30,8 +30,8 @@ public class Product {
     private String pictureUrl;
 	@Column(name = "eca_category_id")
     private Integer categoryId;
-	@Column(name = "eca_category_name")
-    private String categoryName;
+	/*@Column(name = "eca_category_name")
+    private String categoryName;*/
 	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name = "eca_category_id", referencedColumnName = "eca_id", insertable =  false, updatable = false)
@@ -67,12 +67,12 @@ public class Product {
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
-	public String getCategoryName() {
+	/*public String getCategoryName() {
 		return categoryName;
 	}
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
-	}
+	}*/
 	public Category getCategory() {
 		return category;
 	}
