@@ -271,7 +271,6 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
         try {
         	
         	fileStorageLocation = Paths.get(Utility.getInstance().readProperty("file.upload-dir")).toAbsolutePath().normalize();
-        	
             // Check if the file's name contains invalid characters
             if(fileName.contains("..")) {
             	return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommAppResponse, "Sorry! Filename contains invalid path sequence " + fileName);
