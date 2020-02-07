@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -15,14 +13,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "ecomm_order_product")
 public class OrderProduct implements Serializable{
-
-	
-	/*
-	 * @GeneratedValue(strategy=GenerationType.IDENTITY)
-	 * 
-	 * @Column(name = "eca_id") private Integer orderProductId;
-	 */
 	 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7047703723972919074L;
 	@EmbeddedId
     @JsonIgnore
     private OrderProductPK pk;
@@ -66,12 +61,28 @@ public class OrderProduct implements Serializable{
         return getProduct().getPrice() * getQuantity();
     }
 
-	
-	/*
-	 * public Integer getOrderProductId() { return orderProductId; }
-	 * 
-	 * public void setOrderProductId(Integer orderProductId) { this.orderProductId =
-	 * orderProductId; }
-	 */
-	 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrderProduct other = (OrderProduct) obj;
+		if (quantity == null) {
+			if (other.quantity != null)
+				return false;
+		} else if (!quantity.equals(other.quantity))
+			return false;
+		return true;
+	}
 }

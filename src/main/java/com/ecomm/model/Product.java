@@ -20,8 +20,6 @@ public class Product {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "eca_product_id")
 	private Integer productId;
-	//@NotNull(message = "Product name is required.")
-    //@Basic(optional = false)
 	@Column(name = "eca_product_name")
     private String productName;
 	@Column(name = "eca_price")
@@ -78,5 +76,58 @@ public class Product {
 	}
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((category == null) ? 0 : category.hashCode());
+		result = prime * result + ((categoryId == null) ? 0 : categoryId.hashCode());
+		result = prime * result + ((pictureUrl == null) ? 0 : pictureUrl.hashCode());
+		result = prime * result + ((price == null) ? 0 : price.hashCode());
+		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
+		result = prime * result + ((productName == null) ? 0 : productName.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (category == null) {
+			if (other.category != null)
+				return false;
+		} else if (!category.equals(other.category))
+			return false;
+		if (categoryId == null) {
+			if (other.categoryId != null)
+				return false;
+		} else if (!categoryId.equals(other.categoryId))
+			return false;
+		if (pictureUrl == null) {
+			if (other.pictureUrl != null)
+				return false;
+		} else if (!pictureUrl.equals(other.pictureUrl))
+			return false;
+		if (price == null) {
+			if (other.price != null)
+				return false;
+		} else if (!price.equals(other.price))
+			return false;
+		if (productId == null) {
+			if (other.productId != null)
+				return false;
+		} else if (!productId.equals(other.productId))
+			return false;
+		if (productName == null) {
+			if (other.productName != null)
+				return false;
+		} else if (!productName.equals(other.productName))
+			return false;
+		return true;
 	}
 }
