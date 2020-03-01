@@ -19,6 +19,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -38,6 +39,12 @@ public class EcommApplication extends SpringBootServletInitializer implements We
 	public static void main(String[] args) {
 		SpringApplication.run(EcommApplication.class, args);
 	}
+	
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+    	registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
+        .allowedHeaders("*");
+    }
 
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {}

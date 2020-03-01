@@ -167,7 +167,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 	}
 
 	@Override
-	public EcommAppResponse getAllProducts() {
+	public EcommAppResponse getAllProductsImpl() {
 		logger.debug("inside method getAllProducts");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		try {
@@ -190,12 +190,13 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
     }
 	
 	@Override
-    public EcommAppResponse saveProduct(EcommAppRequest ecommAppRequest) {
+    public EcommAppResponse saveProductImpl(EcommAppRequest ecommAppRequest) {
 		logger.debug("inside method saveProduct");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		try {
 			Product savedProduct = productsRepository.save(ecommAppRequest.getProduct());
 			if(savedProduct != null) {
+				ecommResponse.setProductId(savedProduct.getProductId().toString());
 				return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.save.success.msg"));
 			}else {
 				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.save.failed.msg"));
@@ -207,7 +208,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
     }
 	
 	@Override
-    public EcommAppResponse saveCategory(EcommAppRequest ecommAppRequest) {
+    public EcommAppResponse saveCategoryImpl(EcommAppRequest ecommAppRequest) {
 		logger.debug("inside method saveCategory");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		try {
@@ -224,7 +225,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 	}
 
 	@Override
-	public EcommAppResponse getCategories() {
+	public EcommAppResponse getCategoriesImpl() {
 		logger.debug("inside method getCategories");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		try {
@@ -285,4 +286,56 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
         	return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommAppResponse, "Could not store file " + fileName + ". Please try again!");
         }
     }
+
+	@Override
+	public EcommAppResponse deleteProductImpl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method deleteProductImpl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			if(ecommAppRequest.getProductId() != null && !ecommAppRequest.getProductId().equals("")) {
+				Product product = getProduct(Integer.parseInt(ecommAppRequest.getProductId()));
+				if(product != null) {
+					logger.info("Successfully Deleted the Product");
+					productsRepository.delete(product);
+					ecommResponse.setProductId(product.getProductId().toString());
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.delete.success.msg"));
+				}else {
+					logger.info("Failed to Delete the Product");
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("no.data.found"));
+				}
+			}else {
+				logger.info("Product Id is mandatory");
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.id.mandatory"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+
+	@Override
+	public EcommAppResponse updateProductImpl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method updateProductImpl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			if(ecommAppRequest.getProduct().getProductId() != null && !ecommAppRequest.getProduct().getProductId().equals("")) {
+				Product product = getProduct(ecommAppRequest.getProduct().getProductId());
+				if(product != null) {
+					logger.info("Successfully Updated the Product");
+					product = productsRepository.save(product);
+					ecommResponse.setProductId(product.getProductId().toString());
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.update.success.msg"));
+				}else {
+					logger.info("Failed to Update the Product");
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("no.data.found"));
+				}
+			}else {
+				logger.info("Product Id is mandatory");
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.id.mandatory"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
 }

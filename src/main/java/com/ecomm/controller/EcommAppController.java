@@ -41,22 +41,32 @@ public class EcommAppController {
 	//get all products available
 	@GetMapping(value = "/products")
     public @NotNull EcommAppResponse getProducts() {
-        return ecommAppService.getAllProducts();
+        return ecommAppService.getAllProductsImpl();
     }
 	//save product
 	@PostMapping(value = "/saveProduct")
     public @NotNull EcommAppResponse saveProducts(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
-        return ecommAppService.saveProduct(ecommAppRequest);
+        return ecommAppService.saveProductImpl(ecommAppRequest);
+    }
+	//delete product
+	@PostMapping(value = "/deleteProduct")
+    public @NotNull EcommAppResponse deleteProduct(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.deleteProductImpl(ecommAppRequest);
+    }
+	//update product
+	@PostMapping(value = "/updateProduct")
+    public @NotNull EcommAppResponse updateProduct(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.updateProductImpl(ecommAppRequest);
     }
 	//save category
 	@PostMapping(value = "/saveCategory")
     public @NotNull EcommAppResponse saveCategory(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
-        return ecommAppService.saveCategory(ecommAppRequest);
+        return ecommAppService.saveCategoryImpl(ecommAppRequest);
     }
 	//get all categories available
 	@GetMapping(value = "/categories")
     public @NotNull EcommAppResponse getCategories() {
-        return ecommAppService.getCategories();
+        return ecommAppService.getCategoriesImpl();
     }
 	//save order
 	@PostMapping(value = "/createOrder")

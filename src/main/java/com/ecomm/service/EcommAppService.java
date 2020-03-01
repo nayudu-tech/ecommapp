@@ -10,10 +10,12 @@ public interface EcommAppService {
 
 	EcommAppResponse registerEcommUserImpl(EcommAppRequest ecommAppRequest);
 	EcommAppResponse createAuthenticationTokenImpl(EcommAppRequest authenticationRequest);
-	EcommAppResponse getAllProducts();
+	EcommAppResponse getAllProductsImpl();
 	Product getProduct(int id);
-	EcommAppResponse saveProduct(EcommAppRequest ecommAppRequest);
-	EcommAppResponse saveCategory(EcommAppRequest ecommAppRequest);
-	EcommAppResponse getCategories();
+	EcommAppResponse saveProductImpl(EcommAppRequest ecommAppRequest);
+	EcommAppResponse saveCategoryImpl(EcommAppRequest ecommAppRequest);
+	EcommAppResponse getCategoriesImpl();
 	EcommAppResponse uploadFileImpl(MultipartFile file, String productId);
+	EcommAppResponse deleteProductImpl(EcommAppRequest ecommAppRequest);
+	EcommAppResponse updateProductImpl(EcommAppRequest ecommAppRequest);
 }

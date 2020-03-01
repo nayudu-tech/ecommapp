@@ -23,6 +23,7 @@ public class EcommAppResponse {
 	private Iterable<Order> orders;
 	private Order order;
 	private String fileName;
+	private String productId;
 	
 	public String getToken() {
 		return token;
@@ -190,5 +191,11 @@ public class EcommAppResponse {
 		} else if (!userName.equals(other.userName))
 			return false;
 		return true;
+	}
+	public String getProductId() {
+		return productId;
+	}
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 }
