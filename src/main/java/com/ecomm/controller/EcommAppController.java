@@ -18,6 +18,7 @@ import com.ecomm.dto.EcommAppRequest;
 import com.ecomm.dto.EcommAppResponse;
 import com.ecomm.service.EcommAppOrderService;
 import com.ecomm.service.EcommAppService;
+import com.ecomm.service.EcommCRUDOperationsService;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -27,6 +28,8 @@ public class EcommAppController {
 	private EcommAppService ecommAppService;
 	@Autowired
 	private EcommAppOrderService ecommAppOrderService;
+	@Autowired
+	private EcommCRUDOperationsService ecommCRUDOperationsService;
 	
 	//register ecomm app user
 	@PostMapping(value = "/register")
@@ -42,6 +45,11 @@ public class EcommAppController {
 	@GetMapping(value = "/products")
     public @NotNull EcommAppResponse getProducts() {
         return ecommAppService.getAllProductsImpl();
+    }
+	//get product
+	@PostMapping(value = "/getProduct")
+    public @NotNull EcommAppResponse getProduct(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.getProductImpl(ecommAppRequest);
     }
 	//save product
 	@PostMapping(value = "/saveProduct")
@@ -63,6 +71,21 @@ public class EcommAppController {
     public @NotNull EcommAppResponse saveCategory(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
         return ecommAppService.saveCategoryImpl(ecommAppRequest);
     }
+	//get category
+	@PostMapping(value = "/getCategory")
+    public @NotNull EcommAppResponse getCategory(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.getCategoryImpl(ecommAppRequest);
+    }
+	//update category
+	@PostMapping(value = "/updateCategory")
+    public @NotNull EcommAppResponse updateCategory(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.updateCategoryImpl(ecommAppRequest);
+    }
+	//delete category
+	@PostMapping(value = "/deleteCategory")
+    public @NotNull EcommAppResponse deleteCategory(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommAppService.deleteCategoryImpl(ecommAppRequest);
+    }
 	//get all categories available
 	@GetMapping(value = "/categories")
     public @NotNull EcommAppResponse getCategories() {
@@ -83,4 +106,9 @@ public class EcommAppController {
     public @NotNull EcommAppResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("productId") String productId) {
 		return ecommAppService.uploadFileImpl(file, productId);
 	}
+	//crud operations
+	@PostMapping(value = "/crudOperations")
+    public @NotNull EcommAppResponse crudOperations(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+        return ecommCRUDOperationsService.crudOperationsImpl(ecommAppRequest);
+    }
 }

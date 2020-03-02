@@ -26,6 +26,8 @@ public class Product {
 	private Double price;
 	@Column(name = "eca_product_img_url")
     private String pictureUrl;
+	@Column(name = "eca_min_order")
+	private Integer productMinimumOrder;
 	@Column(name = "eca_category_id")
     private Integer categoryId;
 	/*@Column(name = "eca_category_name")
@@ -129,5 +131,11 @@ public class Product {
 		} else if (!productName.equals(other.productName))
 			return false;
 		return true;
+	}
+	public Integer getProductMinimumOrder() {
+		return productMinimumOrder;
+	}
+	public void setProductMinimumOrder(Integer productMinimumOrder) {
+		this.productMinimumOrder = productMinimumOrder;
 	}
 }

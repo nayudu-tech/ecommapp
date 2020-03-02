@@ -184,9 +184,12 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 		}
 	}
 	
-	@Override
     public Product getProduct(int id) {
         return productsRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    }
+	
+    public Category getCategory(int id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
 	
 	@Override
@@ -212,8 +215,13 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 		logger.debug("inside method saveCategory");
 		EcommAppResponse ecommResponse = new EcommAppResponse();
 		try {
+			Category categoryByName = categoryRepository.getCategoryByName(ecommAppRequest.getCategory().getCategoryName());
+			if(categoryByName != null) {
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.save.failed.msg"));
+			}
 			Category category = categoryRepository.save(ecommAppRequest.getCategory());
 			if(category != null) {
+				ecommResponse.setCategoryId(category.getCategoryId().toString());
 				return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.save.success.msg"));
 			}else {
 				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.save.failed.msg"));
@@ -301,7 +309,7 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.delete.success.msg"));
 				}else {
 					logger.info("Failed to Delete the Product");
-					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("no.data.found"));
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.not.found.msg"));
 				}
 			}else {
 				logger.info("Product Id is mandatory");
@@ -327,11 +335,112 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.update.success.msg"));
 				}else {
 					logger.info("Failed to Update the Product");
-					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("no.data.found"));
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.not.found.msg"));
 				}
 			}else {
 				logger.info("Product Id is mandatory");
 				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.id.mandatory"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+	
+	@Override
+	public EcommAppResponse updateCategoryImpl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method updateProductImpl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			if(ecommAppRequest.getCategory().getCategoryId() != null && !ecommAppRequest.getCategory().getCategoryId().equals("")) {
+				Category category = getCategory(ecommAppRequest.getCategory().getCategoryId());
+				if(category != null) {
+					logger.info("Successfully Updated the Category");
+					category = categoryRepository.save(category);
+					ecommResponse.setProductId(category.getCategoryId().toString());
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.update.success.msg"));
+				}else {
+					logger.info("Failed to Update the Category");
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.not.found.msg"));
+				}
+			}else {
+				logger.info("Category Id is mandatory");
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.id.mandatory"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+	
+	@Override
+	public EcommAppResponse deleteCategoryImpl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method deleteCategoryImpl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			if(ecommAppRequest.getCategoryId() != null && !ecommAppRequest.getCategoryId().equals("")) {
+				Category category = getCategory(Integer.parseInt(ecommAppRequest.getCategoryId()));
+				if(category != null) {
+					logger.info("Successfully Deleted the Category");
+					categoryRepository.delete(category);
+					ecommResponse.setCategoryId(category.getCategoryId().toString());
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.delete.success.msg"));
+				}else {
+					logger.info("Failed to Delete the Category");
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.not.found.msg"));
+				}
+			}else {
+				logger.info("Product Id is mandatory");
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.id.mandatory"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+
+	@Override
+	public EcommAppResponse getProductImpl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method getProductImpl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			if(ecommAppRequest.getProduct().getProductId() != null && !ecommAppRequest.getProduct().getProductId().equals("")) {
+				Product product = getProduct(ecommAppRequest.getProduct().getProductId());
+				if(product != null) {
+					ecommResponse.setProduct(product);
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.update.success.msg"));
+				}else {
+					logger.info("Failed to fetch the Product");
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.not.found.msg"));
+				}
+			}else {
+				logger.info("Product Id is mandatory");
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.id.mandatory"));
+			}
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
+		}
+	}
+
+	@Override
+	public EcommAppResponse getCategoryImpl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method getCategoryImpl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		try {
+			if(ecommAppRequest.getCategory().getCategoryId() != null && !ecommAppRequest.getCategory().getCategoryId().equals("")) {
+				Category category = getCategory(ecommAppRequest.getCategory().getCategoryId());
+				if(category != null) {
+					logger.info("Successfully Updated the Category");
+					ecommResponse.setCategory(category);
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.update.success.msg"));
+				}else {
+					logger.info("Failed to Update the Category");
+					return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.not.found.msg"));
+				}
+			}else {
+				logger.info("Category Id is mandatory");
+				return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.id.mandatory"));
 			}
 		}catch(Exception e) {
 			logger.error("technical error message ::"+e.getMessage());

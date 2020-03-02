@@ -24,6 +24,9 @@ public class EcommAppResponse {
 	private Order order;
 	private String fileName;
 	private String productId;
+	private String categoryId;
+	private Product product;
+	private Category category;
 	
 	public String getToken() {
 		return token;
@@ -197,5 +200,23 @@ public class EcommAppResponse {
 	}
 	public void setProductId(String productId) {
 		this.productId = productId;
+	}
+	public String getCategoryId() {
+		return categoryId;
+	}
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	public Category getCategory() {
+		return category;
+	}
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 }

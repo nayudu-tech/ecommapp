@@ -21,6 +21,8 @@ public class EcommAppRequest {
 	private String customerEmail;
 	private String productId;
 	private String categoryId;
+	private String moduleName;
+	private String operationType;
 	
 	public String getPassword() {
 		return password;
@@ -206,5 +208,17 @@ public class EcommAppRequest {
 		} else if (!productId.equals(other.productId))
 			return false;
 		return true;
+	}
+	public String getModuleName() {
+		return moduleName;
+	}
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+	public String getOperationType() {
+		return operationType;
+	}
+	public void setOperationType(String operationType) {
+		this.operationType = operationType;
 	}
 }
