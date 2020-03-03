@@ -20,6 +20,8 @@ public class Category {
 	private Integer categoryId;
 	@Column(name = "eca_category_name")
     private String categoryName;
+	@Column(name = "eca_category_img_url")
+	private String categoryImgUrl;
 	@OneToMany(targetEntity=Product.class, mappedBy = "category", fetch = FetchType.LAZY)
 	private List<Product> products;
 	
@@ -75,5 +77,11 @@ public class Category {
 		} else if (!products.equals(other.products))
 			return false;
 		return true;
+	}
+	public String getCategoryImgUrl() {
+		return categoryImgUrl;
+	}
+	public void setCategoryImgUrl(String categoryImgUrl) {
+		this.categoryImgUrl = categoryImgUrl;
 	}
 }

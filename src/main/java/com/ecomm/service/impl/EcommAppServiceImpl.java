@@ -252,15 +252,29 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 
 	@Override
 	public EcommAppResponse uploadFileImpl(MultipartFile file, String productId) {
-		EcommAppResponse ecommResponse = storeFile(file);
+		EcommAppResponse ecommResponse = storeFile(file, productId);
+		String idType = "";
 		try {
+			
+			idType = String.valueOf(productId.charAt(0));
+			
 			if(ecommResponse.getStatusCode() == 200) {
-				Product product = getProduct(Integer.parseInt(productId));
-				if(product != null) {
-					String fileDownloadUri = "http://ec2-18-222-3-132.us-east-2.compute.amazonaws.com:8080/products-imgs/"+ecommResponse.getFileName();
-					product.setPictureUrl(fileDownloadUri);
-					productsRepository.save(product);
-					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+				if(!idType.equals("") && idType.equalsIgnoreCase("P")) {
+					Product product = getProduct(Integer.parseInt(productId.substring(0, productId.length() - 1)));
+					if(product != null) {
+						String fileDownloadUri = "http://ec2-18-222-3-132.us-east-2.compute.amazonaws.com:8080/products-imgs/"+ecommResponse.getFileName();
+						product.setPictureUrl(fileDownloadUri);
+						productsRepository.save(product);
+						return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+					}
+				}else if(!idType.equals("") && idType.equalsIgnoreCase("C")) {
+					Category category = getCategory(Integer.parseInt(productId.substring(0, productId.length() - 1)));
+					if(category != null) {
+						String fileDownloadUri = "http://ec2-18-222-3-132.us-east-2.compute.amazonaws.com:8080/category-imgs/"+ecommResponse.getFileName();
+						category.setCategoryImgUrl(fileDownloadUri);
+						categoryRepository.save(category);
+						return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+					}
 				}
 			}
 			
@@ -271,15 +285,19 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 		return ecommResponse;
 	}
 	
-	private EcommAppResponse storeFile(MultipartFile file) {
+	private EcommAppResponse storeFile(MultipartFile file, String productId) {
 		
 		EcommAppResponse ecommAppResponse = new EcommAppResponse();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         Path fileStorageLocation = null;
 
         try {
-        	
-        	fileStorageLocation = Paths.get(Utility.getInstance().readProperty("file.upload-dir")).toAbsolutePath().normalize();
+        	String idType = String.valueOf(productId.charAt(0));
+        	if(!idType.equals("") && idType.equalsIgnoreCase("P")) {
+        		fileStorageLocation = Paths.get(Utility.getInstance().readProperty("file.upload-product-dir")).toAbsolutePath().normalize();
+        	}else if(!idType.equals("") && idType.equalsIgnoreCase("C")) {
+        		fileStorageLocation = Paths.get(Utility.getInstance().readProperty("file.upload-category-dir")).toAbsolutePath().normalize();
+        	}
             // Check if the file's name contains invalid characters
             if(fileName.contains("..")) {
             	return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommAppResponse, "Sorry! Filename contains invalid path sequence " + fileName);
