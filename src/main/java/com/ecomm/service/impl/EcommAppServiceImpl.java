@@ -1,5 +1,6 @@
 package com.ecomm.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,7 +9,9 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -464,5 +467,45 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 			logger.error("technical error message ::"+e.getMessage());
 			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("technical.error.msg"));
 		}
+	}
+	
+	@Override
+	public EcommAppResponse fileUploadBase64Impl(EcommAppRequest ecommAppRequest) {
+		logger.info("inside method fileUploadBase64Impl");
+		EcommAppResponse ecommResponse = new EcommAppResponse();
+		byte[] decodedBytes = null;
+		
+		try {
+
+			String idType = String.valueOf(ecommAppRequest.getIdType().charAt(0));
+        	if(!idType.equals("") && idType.equalsIgnoreCase("P")) {
+        		decodedBytes = Base64.getDecoder().decode(ecommAppRequest.getEncodedString());
+    			FileUtils.writeByteArrayToFile(new File(Utility.getInstance().readProperty("file.upload-product-dir") + ecommAppRequest.getOutputFileName()), decodedBytes);
+    			Product product = getProduct(Integer.parseInt(ecommAppRequest.getIdType().substring(0, ecommAppRequest.getIdType().length() - 1)));
+				if(product != null) {
+					String fileDownloadUri = "http://ec2-3-21-113-188.us-east-2.compute.amazonaws.com:8080/products-imgs/"+ecommResponse.getFileName();
+					product.setPictureUrl(fileDownloadUri);
+					productsRepository.save(product);
+					ecommResponse.setFileName(ecommAppRequest.getOutputFileName());
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+				}
+        	}else if(!idType.equals("") && idType.equalsIgnoreCase("C")) {
+        		decodedBytes = Base64.getDecoder().decode(ecommAppRequest.getEncodedString());
+    			FileUtils.writeByteArrayToFile(new File(Utility.getInstance().readProperty("file.upload-product-dir") + ecommAppRequest.getOutputFileName()), decodedBytes);
+    			Category category = getCategory(Integer.parseInt(ecommAppRequest.getIdType().substring(0, ecommAppRequest.getIdType().length() - 1)));
+				if(category != null) {
+					String fileDownloadUri = "http://ec2-3-21-113-188.us-east-2.compute.amazonaws.com:8080/category-imgs/"+ecommResponse.getFileName();
+					category.setCategoryImgUrl(fileDownloadUri);
+					categoryRepository.save(category);
+					ecommResponse.setFileName(ecommAppRequest.getOutputFileName());
+					return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("transaction.successful"));
+				}
+        	}
+			
+		}catch(Exception e) {
+			logger.error("technical error message ::"+e.getMessage());
+			return Utility.getInstance().failureResponse(new EcommAppRequest(), ecommResponse, "Could not store file " + ecommAppRequest.getOutputFileName() + ". Please try again!");
+		}
+		return ecommResponse;
 	}
 }

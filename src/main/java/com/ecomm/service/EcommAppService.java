@@ -20,4 +20,5 @@ public interface EcommAppService {
 	EcommAppResponse deleteCategoryImpl(EcommAppRequest ecommAppRequest);
 	EcommAppResponse getProductImpl(EcommAppRequest ecommAppRequest);
 	EcommAppResponse getCategoryImpl(EcommAppRequest ecommAppRequest);
+	EcommAppResponse fileUploadBase64Impl(EcommAppRequest ecommAppRequest);
 }

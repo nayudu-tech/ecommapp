@@ -23,6 +23,9 @@ public class EcommAppRequest {
 	private String categoryId;
 	private String moduleName;
 	private String operationType;
+	private String encodedString;
+	private String outputFileName;
+	private String idType;
 	
 	public String getPassword() {
 		return password;
@@ -220,5 +223,23 @@ public class EcommAppRequest {
 	}
 	public void setOperationType(String operationType) {
 		this.operationType = operationType;
+	}
+	public String getEncodedString() {
+		return encodedString;
+	}
+	public void setEncodedString(String encodedString) {
+		this.encodedString = encodedString;
+	}
+	public String getOutputFileName() {
+		return outputFileName;
+	}
+	public void setOutputFileName(String outputFileName) {
+		this.outputFileName = outputFileName;
+	}
+	public String getIdType() {
+		return idType;
+	}
+	public void setIdType(String idType) {
+		this.idType = idType;
 	}
 }

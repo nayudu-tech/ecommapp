@@ -106,6 +106,10 @@ public class EcommAppController {
     public @NotNull EcommAppResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("productId") String productId) {
 		return ecommAppService.uploadFileImpl(file, productId);
 	}
+	@PostMapping("/fileUpload")
+    public @NotNull EcommAppResponse fileUploadBase64(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
+		return ecommAppService.fileUploadBase64Impl(ecommAppRequest);
+	}
 	//crud operations
 	@PostMapping(value = "/crudOperations")
     public @NotNull EcommAppResponse crudOperations(@Valid @RequestBody EcommAppRequest ecommAppRequest) {
