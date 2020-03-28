@@ -33,7 +33,7 @@ public class Product {
 	/*@Column(name = "eca_category_name")
     private String categoryName;*/
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.LAZY)
 	@JoinColumn(name = "eca_category_id", referencedColumnName = "eca_id", insertable =  false, updatable = false)
 	private Category category;
 	

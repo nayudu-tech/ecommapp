@@ -81,6 +81,12 @@ public class EcommCRUDOperationsServiceImpl implements EcommCRUDOperationsServic
 					Product product = getProduct(ecommAppRequest.getProduct().getProductId());
 					if(product != null) {
 						logger.info("Successfully Updated the Product");
+						if(ecommAppRequest.getProduct().getPrice() != null && !ecommAppRequest.getProduct().getPrice().equals(""))
+							product.setPrice(ecommAppRequest.getProduct().getPrice());
+						if(ecommAppRequest.getProduct().getProductMinimumOrder() != null && !ecommAppRequest.getProduct().getProductMinimumOrder().equals(""))
+							product.setProductMinimumOrder(ecommAppRequest.getProduct().getProductMinimumOrder());
+						if(ecommAppRequest.getProduct().getProductName() != null && !ecommAppRequest.getProduct().getProductName().equals(""))
+							product.setProductName(ecommAppRequest.getProduct().getProductName());
 						product = productsRepository.save(product);
 						ecommResponse.setProductId(product.getProductId().toString());
 						return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("product.update.success.msg"));
@@ -161,8 +167,10 @@ public class EcommCRUDOperationsServiceImpl implements EcommCRUDOperationsServic
 					Category category = getCategory(ecommAppRequest.getCategory().getCategoryId());
 					if(category != null) {
 						logger.info("Successfully Updated the Category");
+						if(ecommAppRequest.getCategory().getCategoryName() != null && !ecommAppRequest.getCategory().getCategoryName().equals(""))
+							category.setCategoryName(ecommAppRequest.getCategory().getCategoryName());
 						category = categoryRepository.save(category);
-						ecommResponse.setProductId(category.getCategoryId().toString());
+						ecommResponse.setCategoryId(category.getCategoryId().toString());
 						return Utility.getInstance().successResponse(new EcommAppRequest(), ecommResponse, Utility.getInstance().readProperty("category.update.success.msg"));
 					}else {
 						logger.info("Failed to Update the Category");

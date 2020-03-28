@@ -481,9 +481,9 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
         	if(!idType.equals("") && idType.equalsIgnoreCase("P")) {
         		decodedBytes = Base64.getDecoder().decode(ecommAppRequest.getEncodedString());
     			FileUtils.writeByteArrayToFile(new File(Utility.getInstance().readProperty("file.upload-product-dir") + ecommAppRequest.getOutputFileName()), decodedBytes);
-    			Product product = getProduct(Integer.parseInt(ecommAppRequest.getIdType().substring(0, ecommAppRequest.getIdType().length() - 1)));
+    			Product product = getProduct(Integer.parseInt(ecommAppRequest.getIdType().substring(1, (ecommAppRequest.getIdType().length()))));
 				if(product != null) {
-					String fileDownloadUri = "http://ec2-3-21-113-188.us-east-2.compute.amazonaws.com:8080/products-imgs/"+ecommResponse.getFileName();
+					String fileDownloadUri = "http://ec2-3-21-113-188.us-east-2.compute.amazonaws.com:8080/products-imgs/"+ecommAppRequest.getOutputFileName();
 					product.setPictureUrl(fileDownloadUri);
 					productsRepository.save(product);
 					ecommResponse.setFileName(ecommAppRequest.getOutputFileName());
@@ -491,10 +491,10 @@ public class EcommAppServiceImpl implements EcommAppService, UserDetailsService 
 				}
         	}else if(!idType.equals("") && idType.equalsIgnoreCase("C")) {
         		decodedBytes = Base64.getDecoder().decode(ecommAppRequest.getEncodedString());
-    			FileUtils.writeByteArrayToFile(new File(Utility.getInstance().readProperty("file.upload-product-dir") + ecommAppRequest.getOutputFileName()), decodedBytes);
-    			Category category = getCategory(Integer.parseInt(ecommAppRequest.getIdType().substring(0, ecommAppRequest.getIdType().length() - 1)));
+    			FileUtils.writeByteArrayToFile(new File(Utility.getInstance().readProperty("file.upload-category-dir") + ecommAppRequest.getOutputFileName()), decodedBytes);
+    			Category category = getCategory(Integer.parseInt(ecommAppRequest.getIdType().substring(1, ecommAppRequest.getIdType().length())));
 				if(category != null) {
-					String fileDownloadUri = "http://ec2-3-21-113-188.us-east-2.compute.amazonaws.com:8080/category-imgs/"+ecommResponse.getFileName();
+					String fileDownloadUri = "http://ec2-3-21-113-188.us-east-2.compute.amazonaws.com:8080/category-imgs/"+ecommAppRequest.getOutputFileName();
 					category.setCategoryImgUrl(fileDownloadUri);
 					categoryRepository.save(category);
 					ecommResponse.setFileName(ecommAppRequest.getOutputFileName());
